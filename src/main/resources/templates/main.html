@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>test</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js" />
+    <script>
+        $(document).ready(function() {
+            function postMessage() {
+                $.ajax({
+                    type: 'POST',
+                    url: 'message/post',
+                    dataType: 'json',
+                    contentType: "application/json",
+                    data: JSON.stringify({id: $("#messageId").text()}),
+                    success: function (message) {
+                        $("#messageTable > tbody:last-child").append(createRowForMessage(message));
+                        $("#messageId").text(message.id + 1);
+                    }
+                });
+            }
+
+            function createRowForMessage(message) {
+                return "<tr>"
+                        + "<td>" + message.userId + "</td>"
+                        + "<td>" + message.id + "</td>"
+                        + "<td>" + message.title + "</td>"
+                        + "<td>" + message.body + "</td>"
+                        + "</tr>";
+            }
+
+            $("#postMessage").on("click", function() {
+                postMessage();
+            });
+
+        });
+    </script>
+</head>
+<body>
+    <div>
+        <button id="postMessage">
+            Post a new message with id
+            <span th:text="${messages.isEmpty() ? 1 : messages.get(messages.size() - 1).id + 1}" id="messageId"></span>
+        </button>
+    </div>
+    <div>
+        <table border="1" id="messageTable">
+            <tr>
+                <th>userId</th>
+                <th>id</th>
+                <th>title</th>
+                <th>body</th>
+            </tr>
+            <tr th:each="message : ${messages}">
+                <td><span th:text="${message.userId}"></span></td>
+                <td><span th:text="${message.id}"></span></td>
+                <td><span th:text="${message.title}"></span></td>
+                <td><span th:text="${message.body}"></span></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
